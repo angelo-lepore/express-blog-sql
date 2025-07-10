@@ -47,7 +47,24 @@ function update(req, res) {}
 function modify(req, res) {}
 
 /* destroy */
-function destroy(req, res) {}
+function destroy(req, res) {
+  // estrae l'ID dalla URL e lo converte da stringa a numero
+  const id = parseInt(req.params.id);
+  // definiamo la query SQL per eliminare l'elemento dalla tabella "menu" con l'ID specificato
+  const sql = "DELETE FROM posts WHERE id = ? ;";
+  // esegue la query sul database, passando l'ID come parametro
+  connection.query(sql, [id], (err, results) => {
+    // gestisce eventuali errori durante l'esecuzione della query
+    if (err) return res.status(500).json({ error: "Failed to delete pizza" });
+    // verifichiamo se è stato effettivamente eliminato un elemento dalla tabella
+    if (results.affectedRows === 0) {
+      // se nessuna riga è stata eliminata, l'ID non esiste nel database e ci restituisce questo errore
+      return res.status(404).json({ error: "Post not found" });
+    }
+    // se l'eliminazione è avvenuta con successo, restituisce una conferma
+    return res.json({ message: "Post deleted successfully" });
+  });
+}
 
 // esportiamo tutto
 module.exports = { index, show, store, update, modify, destroy };
