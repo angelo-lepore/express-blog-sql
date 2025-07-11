@@ -37,8 +37,22 @@ function show(req, res) {
   });
 }
 
-/* store */
-function store(req, res) {}
+/* store (create) */
+function store(req, res) {
+  //
+  const { title, content, image } = req.body;
+  // definiamo la query SQL per inserire un elemento dalla tabella "posts"
+  const sql = "INSERT INTO posts (title, content, image) VALUES (?, ?, ?)";
+  // esegue la query passando i valori ricevuti come parametri
+  connection.query(sql, [title, content, image], (err, results) => {
+    // se c'è un errore durante l'inserimento nel database
+    if (err) return res.status(500).json({ error: "Failed to insert post" });
+    // Se l'inserimento ha successo, restituisce lo status 201 (Created)
+    res.status(201);
+    // e un oggetto JSON contenente l'ID del nuovo post creato
+    res.json({ id: results.insertId });
+  });
+}
 
 /* update */
 function update(req, res) {}
@@ -111,7 +125,7 @@ function show(req, res) {
 }
 */
 
-/* store
+/* store (create)
 function store(req, res) {
   // creiamo un nuovo ID incrementando l'ultimo ID presente nell'array posts
   const newId = posts[posts.length - 1].id + 1;
