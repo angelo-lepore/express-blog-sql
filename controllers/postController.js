@@ -23,13 +23,13 @@ function index(req, res) {
 function show(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
-  // definiamo la query SQL per selezionare un elemento dalla tabella "menu" con l'ID specificato
+  // definiamo la query SQL per selezionare un elemento dalla tabella "posts" con l'ID specificato
   const sql = "SELECT * FROM posts WHERE id = ? ;";
   // esegue la query sul database, passando l'ID come parametro
   connection.query(sql, [id], (err, results) => {
     // se si verifica un errore durante la connessione o l'esecuzione della query
     if (err) return res.status(500).json({ error: "Database query failed" });
-    // se non viene trovato alcun risultato (l'ID non esiste nella tabella "menu"),
+    // se non viene trovato alcun risultato (l'ID non esiste nella tabella "posts"),
     if (results.length === 0)
       return res.status(404).json({ error: "Post not found" });
     // se l'elemento è stato trovato, lo restituisce come risposta JSON
@@ -50,7 +50,7 @@ function modify(req, res) {}
 function destroy(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
-  // definiamo la query SQL per eliminare l'elemento dalla tabella "menu" con l'ID specificato
+  // definiamo la query SQL per eliminare l'elemento dalla tabella "posts" con l'ID specificato
   const sql = "DELETE FROM posts WHERE id = ? ;";
   // esegue la query sul database, passando l'ID come parametro
   connection.query(sql, [id], (err, results) => {
