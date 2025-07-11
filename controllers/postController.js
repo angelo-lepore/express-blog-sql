@@ -6,7 +6,7 @@ const connection = require("../db/connection");
 
 /* rotte CRUD */
 
-/* index (read) */
+/* index (read all) */
 function index(req, res) {
   // definiamo una query SQL che seleziona tutta la tabella "posts"
   const sql = "SELECT * FROM posts";
@@ -39,7 +39,7 @@ function show(req, res) {
 
 /* store (create) */
 function store(req, res) {
-  //
+  // estraiamo i dati (title, content, image) dal corpo della richiesta HTTP
   const { title, content, image } = req.body;
   // definiamo la query SQL per inserire un elemento dalla tabella "posts"
   const sql = "INSERT INTO posts (title, content, image) VALUES (?, ?, ?)";
@@ -47,20 +47,39 @@ function store(req, res) {
   connection.query(sql, [title, content, image], (err, results) => {
     // se c'è un errore durante l'inserimento nel database
     if (err) return res.status(500).json({ error: "Failed to insert post" });
-    // Se l'inserimento ha successo, restituisce lo status 201 (Created)
+    // se l'inserimento ha successo, restituisce lo status 201 (Created)
     res.status(201);
     // e un oggetto JSON contenente l'ID del nuovo post creato
     res.json({ id: results.insertId });
   });
 }
 
-/* update */
-function update(req, res) {}
+/* update (edit) */
+function update(req, res) {
+  // estraiamo l'ID del post dalla URL
+  const { id } = req.params;
+  // estraiamo i nuovi valori dal corpo della richiesta
+  const { title, content, image } = req.body;
+  // definiamo la query SQL per aggiornare un post esistente
+  const sql = "UPDATE posts SET title = ?, content = ?, image = ? WHERE id = ?";
+  // esegue la query, passando i nuovi valori e l'ID
+  connection.query(sql, [title, content, image, id], (err, results) => {
+    // se si verifica un errore durante la query
+    if (err) return res.status(500).json({ error: "Failed to update post" });
+    // se nessuna riga è stata modificata, il post con quell'ID non esiste
+    if (results.affectedRows === 0) {
+      // quindi restituisce un errore
+      return res.status(404).json({ error: "Post not found" });
+    }
+    // altrimenti conferma l'aggiornamento
+    res.json({ message: "Post update successfully" });
+  });
+}
 
-/* modify */
+/* modify (partial edit) */
 function modify(req, res) {}
 
-/* destroy */
+/* destroy (delete) */
 function destroy(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
@@ -85,7 +104,7 @@ module.exports = { index, show, store, update, modify, destroy };
 
 /* vecchie rotte CRUD */
 
-/* index (read)
+/* index (read all)
 function index(req, res) {
   // assegno tutti i post alla variabile di risposta
   let filtered_posts = posts;
@@ -147,7 +166,7 @@ function store(req, res) {
 }
 */
 
-/* update
+/* update (edit)
 function update(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
@@ -172,7 +191,7 @@ function update(req, res) {
 }
 */
 
-/* modify
+/* modify (partial edit)
 function modify(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
@@ -195,7 +214,7 @@ function modify(req, res) {
 }
 */
 
-/* destroy
+/* destroy (delete)
 function destroy(req, res) {
   // estrae l'ID dalla URL e lo converte da stringa a numero
   const id = parseInt(req.params.id);
