@@ -77,7 +77,26 @@ function update(req, res) {
 }
 
 /* modify (partial edit) */
-function modify(req, res) {}
+function modify(req, res) {
+  // estraiamo l'ID del post dalla URL
+  const { id } = req.params;
+  // estraiamo i nuovi valori dal corpo della richiesta
+  const { title } = req.body;
+  // definiamo la query SQL per aggiornare un post esistente
+  const sql = "UPDATE posts SET title = ? WHERE id = ?";
+  // esegue la query, passando i nuovi valori e l'ID
+  connection.query(sql, [title, id], (err, results) => {
+    // se si verifica un errore durante la query
+    if (err) return res.status(500).json({ error: "Failed to modify post" });
+    // se nessuna riga è stata modificata, il post con quell'ID non esiste
+    if (results.affectedRows === 0) {
+      // quindi restituisce un errore
+      return res.status(404).json({ error: "Post not found" });
+    }
+    // altrimenti conferma l'aggiornamento
+    res.json({ message: "Post title updated successfully" });
+  });
+}
 
 /* destroy (delete) */
 function destroy(req, res) {
@@ -101,137 +120,3 @@ function destroy(req, res) {
 
 // esportiamo tutto
 module.exports = { index, show, store, update, modify, destroy };
-
-/* vecchie rotte CRUD */
-
-/* index (read all)
-function index(req, res) {
-  // assegno tutti i post alla variabile di risposta
-  let filtered_posts = posts;
-  // se nella query string è presente il parametro 'tags'
-  if (req.query.tags) {
-    // filtriamo i post, tenendo solo quelli che includono il tag richiesto
-    filtered_posts = posts.filter((post) => post.tags.includes(req.query.tags));
-  }
-  // se non sono stati trovati post con il tag specificato, restituisce un errore 404 (Not Found)
-  if (filtered_posts.length === 0) {
-    return res.status(404).json({
-      status: 404,
-      // e un messaggio di errore
-      message: "Nessun post trovato con il tag specificato.",
-    });
-  }
-  // invia i post filtrati (o tutti se non è stato specificato alcun tag)
-  res.json(filtered_posts);
-}
-*/
-
-/* show (read)
-function show(req, res) {
-  // estrae l'ID dalla URL e lo converte da stringa a numero
-  const id = parseInt(req.params.id);
-  // cerca il post nell'array che ha un ID uguale a quello passato
-  const post = posts.find((post) => post.id === id);
-  // se il post non viene trovato, restituisce un errore 404 (Not Found)
-  if (!post) {
-    return res.status(404).json({
-      status: 404,
-      message: "Post non trovato!!",
-    });
-  }
-  // se trovato, restituisce il post come oggetto JSON
-  res.json(post);
-}
-*/
-
-/* store (create)
-function store(req, res) {
-  // creiamo un nuovo ID incrementando l'ultimo ID presente nell'array posts
-  const newId = posts[posts.length - 1].id + 1;
-  // creiamo un nuovo oggetto post
-  const newPost = {
-    id: newId,
-    title: req.body.title,
-    content: req.body.content,
-    image: req.body.image,
-    tags: req.body.tags,
-  };
-  // aggiungiamo il nuovo post all'array posts
-  posts.push(newPost);
-  // controllo per verificare che il nuovo post sia stato aggiunto correttamente
-  console.log(posts);
-  // restituiamo lo status corretto e il nuovo post come oggetto JSON
-  res.status(201);
-  res.json(newPost);
-}
-*/
-
-/* update (edit)
-function update(req, res) {
-  // estrae l'ID dalla URL e lo converte da stringa a numero
-  const id = parseInt(req.params.id);
-  // cerca il post nell'array che ha un ID uguale a quello passato
-  const post = posts.find((post) => post.id === id);
-  // se il post non viene trovato, restituisce un errore 404 (Not Found)
-  if (!post) {
-    return res.status(404).json({
-      status: 404,
-      message: "Post non trovato!!",
-    });
-  }
-  // aggiorna il post con i nuovi dati ricevuti dal body della richiesta
-  post.title = req.body.title;
-  post.content = req.body.content;
-  post.image = req.body.image;
-  post.tags = req.body.tags;
-  // controllo per verificare che il post sia stato aggiornato correttamente
-  console.log(posts);
-  // restituisce il post aggiornato
-  res.json(post);
-}
-*/
-
-/* modify (partial edit)
-function modify(req, res) {
-  // estrae l'ID dalla URL e lo converte da stringa a numero
-  const id = parseInt(req.params.id);
-  // cerca il post nell'array che ha un ID uguale a quello passato
-  const post = posts.find((post) => post.id === id);
-  // se il post non viene trovato, restituisce un errore 404 (Not Found)
-  if (!post) {
-    return res.status(404).json({
-      status: 404,
-      message: "Post non trovato!!",
-    });
-  }
-  // aggiorna il post con i nuovi dati ricevuti dal body della richiesta
-  post.title = req.body.title;
-  post.tags = req.body.tags;
-  // controllo per verificare che il post sia stato aggiornato correttamente
-  console.log(posts);
-  // restituisce il post aggiornato
-  res.json(post);
-}
-*/
-
-/* destroy (delete)
-function destroy(req, res) {
-  // estrae l'ID dalla URL e lo converte da stringa a numero
-  const id = parseInt(req.params.id);
-  // cerca il post nell'array che ha un ID uguale a quello passato
-  const post = posts.find((post) => post.id === id);
-  // se il post non viene trovato, restituisce un errore 404 (Not Found)
-  if (!post) {
-    return res.status(404).json({
-      status: 404,
-      message: "Post non trovato!!",
-    });
-  }
-  // rimuovo il post trovato dall'array "posts"
-  posts.splice(posts.indexOf(post), 1);
-  // risponde con uno status 204 (No Content) per indicare che l'eliminazione è avvenuta con successo
-  res.sendStatus(204);
-  // log per verificare la nuova array senza il post cancellato
-  console.log(posts);
-}
-*/

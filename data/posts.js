@@ -54,10 +54,10 @@ const posts = [
 module.exports = posts;
 
 /*
-    {
-      "title": "Torta di mele",
-      "content": "La torta di mele è un dolce classico della tradizione italiana, perfetto per la colazione o la merenda. La sua preparazione è semplice e veloce, e il risultato è una torta soffice e profumata, con un delicato sapore di mele. La ricetta prevede l'utilizzo di ingredienti comuni come farina, zucchero, uova e burro, ma è possibile personalizzarla aggiungendo spezie come la cannella o la vaniglia. La torta di mele può essere servita da sola o accompagnata da una pallina di gelato alla vaniglia per un tocco in più.",
-      "image": "/imgs/posts/torta_di_mele.webp",
-      "tags": ["Dolci", "Torte", "Ricette vegetariane", "Ricette al forno"]
-    }
-  */
+  {
+    "title": "Torta di mele",
+    "content": "La torta di mele è un dolce classico della tradizione italiana, perfetto per la colazione o la merenda. La sua preparazione è semplice e veloce, e il risultato è una torta soffice e profumata, con un delicato sapore di mele. La ricetta prevede l'utilizzo di ingredienti comuni come farina, zucchero, uova e burro, ma è possibile personalizzarla aggiungendo spezie come la cannella o la vaniglia. La torta di mele può essere servita da sola o accompagnata da una pallina di gelato alla vaniglia per un tocco in più.",
+    "image": "/imgs/posts/torta_di_mele.webp",
+    "tags": ["Dolci", "Torte", "Ricette vegetariane", "Ricette al forno"]
+  }
+*/
