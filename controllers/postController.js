@@ -76,7 +76,7 @@ function update(req, res) {
   });
 }
 
-/* modify (partial edit) */
+/* modify (title change)
 function modify(req, res) {
   // estraiamo l'ID del post dalla URL
   const { id } = req.params;
@@ -95,6 +95,84 @@ function modify(req, res) {
     }
     // altrimenti conferma l'aggiornamento
     res.json({ message: "Post title updated successfully" });
+  });
+}
+*/
+
+/* modify (partial edit) 
+function modify(req, res) {
+  // estraiamo l'ID del post dalla URL
+  const { id } = req.params;
+  const { title, content, image } = req.body;
+  if (title.length > 0) {
+    const sql = "UPDATE posts SET title = ? WHERE id = ?";
+    const update = title;
+  } else if (content.length > 0) {
+    const sql = "UPDATE posts SET content = ? WHERE id = ?";
+    const update = content;
+  } else if (image.length > 0) {
+    const sql = "UPDATE posts SET image = ? WHERE id = ?";
+    const update = image;
+  }
+  // esegue la query, passando i nuovi valori e l'ID
+  connection.query(sql, [update, id], (err, results) => {
+    // se si verifica un errore durante la query
+    if (err) return res.status(500).json({ error: "Failed to modify post" });
+    // se nessuna riga è stata modificata, il post con quell'ID non esiste
+    if (results.affectedRows === 0) {
+      // quindi restituisce un errore
+      return res.status(404).json({ error: "Post not found" });
+    }
+    // altrimenti conferma l'aggiornamento
+    res.json({ message: "Post updated successfully" });
+  });
+}
+*/
+
+/* modify (partial edit) */
+function modify(req, res) {
+  // estraiamo l'ID del post dalla URL
+  const { id } = req.params;
+  // estraiamo i nuovi valori dal corpo della richiesta
+  const { title, content, image } = req.body;
+  // inizializziamo due array:
+  // - 'fields' conterrà le parti dell'SQL da aggiornare
+  // - 'values' conterrà i nuovi valori corrispondenti
+  const fields = [];
+  const values = [];
+  // se è presente il titolo e non è vuoto, lo aggiunge agli array
+  if (title && title.length > 0) {
+    fields.push("title = ?");
+    values.push(title);
+  }
+  // se è presente il contenuto e non è vuoto, lo aggiunge agli array
+  if (content && content.length > 0) {
+    fields.push("content = ?");
+    values.push(content);
+  }
+  // se è presente l'immagine e non è vuota, la aggiunge agli array
+  if (image && image.length > 0) {
+    fields.push("image = ?");
+    values.push(image);
+  }
+  // Se nessun campo è stato fornito per l'aggiornamento, restituisce errore
+  if (fields.length === 0) {
+    return res.status(400).json({ error: "No fields to update" });
+  }
+  // Costruisce dinamicamente la query SQL usando solo i campi forniti
+  const sql = `UPDATE posts SET ${fields.join(", ")} WHERE id = ?`;
+  // Aggiunge l'ID alla fine dell'array dei valori (serve per il WHERE)
+  values.push(id);
+  // Esegue la query nel database
+  connection.query(sql, values, (err, results) => {
+    // Gestisce eventuali errori della query
+    if (err) return res.status(500).json({ error: "Failed to modify post" });
+    // Se nessun post è stato modificato (id non trovato), restituisce errore 404
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+    // Se tutto è andato bene, restituisce un messaggio di successo
+    res.json({ message: "Post updated successfully" });
   });
 }
 

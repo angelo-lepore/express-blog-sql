@@ -1,7 +1,7 @@
 // importiamo express
 const express = require("express");
 const app = express();
-const port = 3010;
+const port = process.env.port;
 
 // middleware per gestire le richieste a rotte non esistenti (errore 404)
 const notFound = require("./middlewares/notFound");

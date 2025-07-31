@@ -3,10 +3,10 @@ const mysql = require("mysql2");
 
 // creo un oggetto contenente le credenziali per connettersi al database MySQL
 const credetials = {
-  host: "localhost",
-  user: "root",
-  password: "rootroot",
-  database: "db-blog",
+  host: process.env.db_host,
+  user: process.env.db_user,
+  password: process.env.db_password,
+  database: process.env.db_name,
 };
 
 // creo una connessione al database
